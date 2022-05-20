@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:pagoda/Model/data_model.dart';
 import 'package:pagoda/Screens/detailPage.dart';
 import 'package:pagoda/Widget/extraWeather.dart';
 
 Weather? currentTemp;
-Weather? tomorrowTemp;
+// = Weather(current: currentTemp);
+Weather tomorrowTemp = Weather();
 List<Weather>? todayWeather;
 List<Weather>? sevenDay;
 String lat = "53.9006";
@@ -38,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -45,14 +47,20 @@ class _HomePageState extends State<HomePage> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(children: [CurrentWeather(getData), TodayWeather()]),
+        // ignore: unnecessary_null_comparison
+        child: currentTemp == null
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Color.fromARGB(255, 147, 212, 235),
+                ),
+              )
+            : Column(children: [CurrentWeather(getData), TodayWeather()]),
       ),
     );
   }
 }
 
 class CurrentWeather extends StatefulWidget {
-  // final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
   final Function() updateData;
   CurrentWeather(this.updateData);
   @override
@@ -83,6 +91,7 @@ class _CurrentWeatherState extends State<CurrentWeather> {
         color: Color.fromARGB(255, 147, 212, 235).withOpacity(0.6),
         spreadRadius: 5,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               child: searchBar
@@ -121,6 +130,10 @@ class _CurrentWeatherState extends State<CurrentWeather> {
                         lat = temp.lat!;
                         lon = temp.lon!;
                         updating = true;
+                        setState(() {});
+
+                        searchBar = false;
+
                         setState(() {});
                         widget.updateData();
                         searchBar = false;
@@ -168,11 +181,11 @@ class _CurrentWeatherState extends State<CurrentWeather> {
               ),
             ),
             Container(
-              height: 325,
+              height: 315,
               child: Stack(
                 children: [
                   Image(
-                    image: AssetImage(currentTemp!.image!),
+                    image: AssetImage(currentTemp!.image),
                     fit: BoxFit.fill,
                   ),
                   Positioned(
@@ -189,11 +202,11 @@ class _CurrentWeatherState extends State<CurrentWeather> {
                               fontSize: 100,
                               fontWeight: FontWeight.bold),
                         ),
-                        Text(currentTemp!.name!,
+                        Text(currentTemp!.name,
                             style: TextStyle(
                               fontSize: 20,
                             )),
-                        Text(currentTemp!.day!,
+                        Text(currentTemp!.day,
                             style: TextStyle(
                               fontSize: 18,
                             ))
@@ -206,9 +219,9 @@ class _CurrentWeatherState extends State<CurrentWeather> {
             Divider(
               color: Colors.white,
             ),
-            SizedBox(
-              height: 10,
-            ),
+            // SizedBox(
+            //   height: 1,
+            // ),
             ExtraWeather(currentTemp!)
           ],
         ),
@@ -220,67 +233,75 @@ class _CurrentWeatherState extends State<CurrentWeather> {
 class TodayWeather extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Today",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return DetailPage(tomorrowTemp!, sevenDay!);
-                }));
-              },
-              child: Row(
-                children: [
-                  Text(
-                    "7 days ",
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    color: Colors.grey,
-                    size: 25,
-                  )
-                ],
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 30),
+                child: Text(
+                  "Today",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
               ),
-            )
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          margin: EdgeInsets.only(
-            bottom: 30,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                    return DetailPage(tomorrowTemp, sevenDay!);
+                  }));
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "7 days ",
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Color.fromARGB(255, 255, 255, 255)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30),
+                      child: Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        color: Colors.grey,
+                        size: 25,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
-          child: Row(children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 27),
-              child: WeatherWidget(todayWeather![0]),
+          SizedBox(
+            height: 15,
+          ),
+          Container(
+            margin: EdgeInsets.only(
+              bottom: 30,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: WeatherWidget(todayWeather![1]),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: WeatherWidget(todayWeather![2]),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: WeatherWidget(todayWeather![3]),
-            )
-          ]),
-        )
-      ],
+            child: Row(children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 27),
+                child: WeatherWidget(todayWeather![0]),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: WeatherWidget(todayWeather![1]),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: WeatherWidget(todayWeather![2]),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: WeatherWidget(todayWeather![3]),
+              )
+            ]),
+          )
+        ],
+      ),
     );
   }
 }
@@ -305,7 +326,7 @@ class WeatherWidget extends StatelessWidget {
             height: 5,
           ),
           Image(
-            image: AssetImage(weather.image!),
+            image: AssetImage(weather.image),
             width: 50,
             height: 50,
           ),

@@ -31,8 +31,8 @@ class TomorrowWeather extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlowContainer(
-      color: Color(0xff00A1FF),
-      glowColor: Color(0xff00A1FF),
+      color: Color(0xff00A1FF).withOpacity(0.6),
+      glowColor: Color(0xff00A1FF).withOpacity(0.6),
       borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(60), bottomRight: Radius.circular(60)),
       child: Column(
@@ -76,7 +76,7 @@ class TomorrowWeather extends StatelessWidget {
                   height: MediaQuery.of(context).size.width / 2.3,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage(tomorrowTemp.image!))),
+                          image: AssetImage(tomorrowTemp.image))),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +110,7 @@ class TomorrowWeather extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      " " + tomorrowTemp.name!,
+                      " " + tomorrowTemp.name,
                       style: TextStyle(
                         fontSize: 15,
                       ),
@@ -147,51 +147,53 @@ class SevenDays extends StatelessWidget {
   SevenDays(this.sevenDay);
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: sevenDay.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-                padding: EdgeInsets.only(left: 20, right: 20, bottom: 25),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(sevenDay[index].day!, style: TextStyle(fontSize: 20)),
-                    Container(
-                      width: 135,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Image(
-                            image: AssetImage(sevenDay[index].image!),
-                            width: 40,
-                          ),
-                          SizedBox(width: 15),
-                          Text(
-                            sevenDay[index].name!,
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
+    return Container(
+      child: Expanded(
+        child: ListView.builder(
+            itemCount: sevenDay.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(sevenDay[index].day, style: TextStyle(fontSize: 20)),
+                      Container(
+                        width: 135,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image(
+                              image: AssetImage(sevenDay[index].image),
+                              width: 40,
+                            ),
+                            SizedBox(width: 15),
+                            Text(
+                              sevenDay[index].name!,
+                              style: TextStyle(fontSize: 20),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "+" + sevenDay[index].max.toString() + "\u00B0",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "+" + sevenDay[index].min.toString() + "\u00B0",
-                          style: TextStyle(fontSize: 20, color: Colors.grey),
-                        ),
-                      ],
-                    )
-                  ],
-                ));
-          }),
+                      Row(
+                        children: [
+                          Text(
+                            "+" + sevenDay[index].max.toString() + "\u00B0",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "+" + sevenDay[index].min.toString() + "\u00B0",
+                            style: TextStyle(fontSize: 20, color: Colors.grey),
+                          ),
+                        ],
+                      )
+                    ],
+                  ));
+            }),
+      ),
     );
   }
 }

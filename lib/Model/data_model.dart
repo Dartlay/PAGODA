@@ -4,30 +4,31 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class Weather {
-  final int? max;
-  final int? min;
-  final int? current;
-  final String? name;
-  final String? day;
-  final int? wind;
-  final int? humidity;
-  final int? chanceRain;
-  final String? image;
-  final String? time;
-  final String? location;
+  var max;
+  var min;
+  var current;
+  var name;
+  var day;
+  var wind;
+  var humidity;
+  var chanceRain;
+  var image;
+  var time;
+  var location;
 
-  Weather(
-      {this.max,
-      this.min,
-      this.name,
-      this.day,
-      this.wind,
-      this.humidity,
-      this.chanceRain,
-      this.image,
-      this.current,
-      this.time,
-      this.location});
+  Weather({
+    this.max,
+    this.min,
+    this.name,
+    this.day,
+    this.wind,
+    this.humidity,
+    this.chanceRain,
+    this.image,
+    this.current,
+    this.time,
+    this.location,
+  });
 }
 
 String appId = "cf3f8258706e31556516ee84864061c9";
@@ -100,19 +101,19 @@ String findIcon(String name, bool type) {
     switch (name) {
       case "Clouds":
         return "assets/sunny.png";
-        break;
+
       case "Rain":
         return "assets/rainy.png";
-        break;
+
       case "Drizzle":
         return "assets/rainy.png";
-        break;
+
       case "Thunderstorm":
         return "assets/thunder.png";
-        break;
+
       case "Snow":
         return "assets/snow.png";
-        break;
+
       default:
         return "assets/sunny.png";
     }
@@ -120,19 +121,19 @@ String findIcon(String name, bool type) {
     switch (name) {
       case "Clouds":
         return "assets/sunny_2d.png";
-        break;
+
       case "Rain":
         return "assets/rainy_2d.png";
-        break;
+
       case "Drizzle":
         return "assets/rainy_2d.png";
-        break;
+
       case "Thunderstorm":
         return "assets/thunder_2d.png";
-        break;
+
       case "Snow":
         return "assets/snow_2d.png";
-        break;
+
       default:
         return "assets/sunny_2d.png";
     }
