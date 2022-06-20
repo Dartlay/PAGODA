@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:pagoda/Utilits/find_icon.dart';
 
-class Weather {
+class WeatherRepository {
   var max;
   var min;
   var current;
@@ -16,7 +17,7 @@ class Weather {
   var time;
   var location;
 
-  Weather({
+  WeatherRepository({
     this.max,
     this.min,
     this.name,
@@ -42,7 +43,7 @@ Future<List> fetchData(String lat, String lon, String city) async {
     var res = json.decode(response.body);
     //Конктретная погода
     var current = res["current"];
-    Weather currentTemp = Weather(
+    WeatherRepository currentTemp = WeatherRepository(
         current: current["temp"]?.round() ?? 0,
         name: current["weather"][0]["main"].toString(),
         day: DateFormat("EEEE dd MMMM").format(date),
@@ -53,11 +54,11 @@ Future<List> fetchData(String lat, String lon, String city) async {
         image: findIcon(current["weather"][0]["main"].toString(), true));
 
     //Погода на сегодня
-    List<Weather> todayWeather = [];
+    List<WeatherRepository> todayWeather = [];
     int hour = int.parse(DateFormat("hh").format(date));
     for (var i = 0; i < 4; i++) {
       var temp = res["hourly"];
-      var hourly = Weather(
+      var hourly = WeatherRepository(
           current: temp[i]["temp"]?.round() ?? 0,
           image: findIcon(temp[i]["weather"][0]["main"].toString(), false),
           time: Duration(hours: hour + i + 1).toString().split(":")[0] + ":00");
@@ -66,7 +67,7 @@ Future<List> fetchData(String lat, String lon, String city) async {
 
     //Ежедневная погода
     var daily = res["daily"][0];
-    Weather tomorrowTemp = Weather(
+    WeatherRepository tomorrowTemp = WeatherRepository(
         max: daily["temp"]["max"]?.round() ?? 0,
         min: daily["temp"]["min"]?.round() ?? 0,
         image: findIcon(daily["weather"][0]["main"].toString(), true),
@@ -76,13 +77,13 @@ Future<List> fetchData(String lat, String lon, String city) async {
         chanceRain: daily["uvi"]?.round() ?? 0);
 
     //Погода на 7 дней
-    List<Weather> sevenDay = [];
+    List<WeatherRepository> sevenDay = [];
     for (var i = 1; i < 8; i++) {
       String day = DateFormat("EEEE")
           .format(DateTime(date.year, date.month, date.day + i + 1))
           .substring(0, 3);
       var temp = res["daily"][i];
-      var hourly = Weather(
+      var hourly = WeatherRepository(
           max: temp["temp"]["max"]?.round() ?? 0,
           min: temp["temp"]["min"]?.round() ?? 0,
           image: findIcon(temp["weather"][0]["main"].toString(), false),
@@ -93,80 +94,4 @@ Future<List> fetchData(String lat, String lon, String city) async {
     return [currentTemp, todayWeather, tomorrowTemp, sevenDay];
   }
   return [null, null, null, null];
-}
-
-//Иконки
-String findIcon(String name, bool type) {
-  if (type) {
-    switch (name) {
-      case "Clouds":
-        return "assets/sunny.png";
-
-      case "Rain":
-        return "assets/rainy.png";
-
-      case "Drizzle":
-        return "assets/rainy.png";
-
-      case "Thunderstorm":
-        return "assets/thunder.png";
-
-      case "Snow":
-        return "assets/snow.png";
-
-      default:
-        return "assets/sunny.png";
-    }
-  } else {
-    switch (name) {
-      case "Clouds":
-        return "assets/sunny_2d.png";
-
-      case "Rain":
-        return "assets/rainy_2d.png";
-
-      case "Drizzle":
-        return "assets/rainy_2d.png";
-
-      case "Thunderstorm":
-        return "assets/thunder_2d.png";
-
-      case "Snow":
-        return "assets/snow_2d.png";
-
-      default:
-        return "assets/sunny_2d.png";
-    }
-  }
-}
-
-//Модель городов
-class CityModel {
-  final String? name;
-  final String? lat;
-  final String? lon;
-  CityModel({this.name, this.lat, this.lon});
-}
-
-var cityJSON;
-
-Future<CityModel?> fetchCity(String cityName) async {
-  if (cityJSON == null) {
-    String link =
-        "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/cities.json";
-    var response = await http.get(Uri.parse(link));
-    if (response.statusCode == 200) {
-      cityJSON = json.decode(response.body);
-    }
-  }
-  for (var i = 0; i < cityJSON.length; i++) {
-    if (cityJSON[i]["name"].toString().toLowerCase() ==
-        cityName.toLowerCase()) {
-      return CityModel(
-          name: cityJSON[i]["name"].toString(),
-          lat: cityJSON[i]["latitude"].toString(),
-          lon: cityJSON[i]["longitude"].toString());
-    }
-  }
-  return null;
 }

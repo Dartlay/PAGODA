@@ -49,6 +49,11 @@ dependencies:
   awesome_notifications: ^0.6.21
   flutter_glow: ^0.2.0
   geolocator: ^8.2.0
+  pixel_perfect: ^1.1.1
+  flutter_screenutil: ^5.5.3+2
+  dartz: ^0.10.1
+  internet_connection_checker: ^0.0.1+4
+  get_it: ^7.2.0
   
   
 

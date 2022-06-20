@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
-import 'package:pagoda/Model/data_model.dart';
-import 'package:pagoda/Widget/extraWeather.dart';
+import 'package:pagoda/Screens/HomePage/home.dart';
+import '../../Api/api_weather.dart';
+import '../../Widget/extra_weather.dart';
 
 class DetailPage extends StatelessWidget {
-  final Weather tomorrowTemp;
-  final List<Weather> sevenDay;
+  final WeatherRepository tomorrowTemp;
+  final List<WeatherRepository> sevenDay;
   DetailPage(this.tomorrowTemp, this.sevenDay);
   @override
   Widget build(BuildContext context) {
@@ -26,8 +27,9 @@ class DetailPage extends StatelessWidget {
 }
 
 class TomorrowWeather extends StatelessWidget {
-  final Weather tomorrowTemp;
+  final WeatherRepository tomorrowTemp;
   TomorrowWeather(this.tomorrowTemp);
+
   @override
   Widget build(BuildContext context) {
     return GlowContainer(
@@ -128,7 +130,7 @@ class TomorrowWeather extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Divider(color: Colors.white),
+                // Divider(color: Colors.white),
                 SizedBox(
                   height: 10,
                 ),
@@ -143,7 +145,7 @@ class TomorrowWeather extends StatelessWidget {
 }
 
 class SevenDays extends StatelessWidget {
-  final List<Weather> sevenDay;
+  List<WeatherRepository> sevenDay;
   SevenDays(this.sevenDay);
   @override
   Widget build(BuildContext context) {
@@ -169,7 +171,7 @@ class SevenDays extends StatelessWidget {
                             ),
                             SizedBox(width: 15),
                             Text(
-                              sevenDay[index].name!,
+                              sevenDay[index].name,
                               style: TextStyle(fontSize: 20),
                             )
                           ],
