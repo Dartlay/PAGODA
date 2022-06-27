@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pagoda/Block/bloc/homepage_bloc.dart';
 import 'package:pagoda/Screens/HomePage/home.dart';
 import 'package:flutter/services.dart';
 

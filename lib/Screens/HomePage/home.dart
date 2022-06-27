@@ -8,10 +8,10 @@ import 'package:pagoda/Utilits/city_model.dart';
 import 'package:pagoda/Widget/extra_weather.dart';
 import 'package:pagoda/Widget/weather_tablet_widget.dart';
 
-WeatherRepository? currentTemp;
-WeatherRepository tomorrowTemp = WeatherRepository();
-List<WeatherRepository>? todayWeather;
-List<WeatherRepository>? sevenDay;
+Weather? currentTemp;
+Weather tomorrowTemp = Weather();
+List<Weather>? todayWeather;
+List<Weather>? sevenDay;
 String lat = "53.9006";
 String lon = "27.5590";
 String city = "Minisk";
@@ -76,7 +76,6 @@ class Currentweather extends StatefulWidget {
 class _CurrentWeatherState extends State<Currentweather> {
   bool searchBar = false;
   bool updating = true;
-
   var focusNode = FocusNode();
 
   @override
@@ -116,7 +115,6 @@ class _CurrentWeatherState extends State<Currentweather> {
                         textInputAction: TextInputAction.search,
                         onSubmitted: (value) async {
                           CityModel? temp = await fetchCity(value);
-
                           if (temp == null) {
                             showDialog(
                                 context: context,

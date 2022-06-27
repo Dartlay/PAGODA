@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../Api/api_weather.dart';
+import 'package:pagoda/Api/api_weather.dart';
 
 class WeatherWidget extends StatelessWidget {
-  final WeatherRepository weather;
+  final Weather weather;
   WeatherWidget(this.weather);
   @override
   Widget build(BuildContext context) {

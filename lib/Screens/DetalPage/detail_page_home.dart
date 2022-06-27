@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
-import 'package:pagoda/Screens/HomePage/home.dart';
-import '../../Api/api_weather.dart';
-import '../../Widget/extra_weather.dart';
+import 'package:pagoda/Api/api_weather.dart';
+import 'package:pagoda/Widget/extra_weather.dart';
 
 class DetailPage extends StatelessWidget {
-  final WeatherRepository tomorrowTemp;
-  final List<WeatherRepository> sevenDay;
+  final Weather tomorrowTemp;
+  final List<Weather> sevenDay;
   DetailPage(this.tomorrowTemp, this.sevenDay);
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class DetailPage extends StatelessWidget {
 }
 
 class TomorrowWeather extends StatelessWidget {
-  final WeatherRepository tomorrowTemp;
+  final Weather tomorrowTemp;
   TomorrowWeather(this.tomorrowTemp);
 
   @override
@@ -145,7 +144,7 @@ class TomorrowWeather extends StatelessWidget {
 }
 
 class SevenDays extends StatelessWidget {
-  List<WeatherRepository> sevenDay;
+  List<Weather> sevenDay;
   SevenDays(this.sevenDay);
   @override
   Widget build(BuildContext context) {

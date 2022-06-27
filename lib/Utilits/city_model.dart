@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class CityModel {
   final String name;
@@ -13,7 +15,6 @@ Future<CityModel?> fetchCity(String cityName) async {
   if (cityJSON == null) {
     String link =
         "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/cities.json";
-    var http;
     var response = await http.get(Uri.parse(link));
     if (response.statusCode == 200) {
       cityJSON = json.decode(response.body);
