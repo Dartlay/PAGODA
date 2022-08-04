@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class TodayWeather extends Equatable {
-  final int current;
-  final String time;
-  final String image;
+class TodayWeatherModel extends Equatable {
+  int current;
+  String time;
+  String image;
 
-  const TodayWeather({
+  TodayWeatherModel({
     required this.current,
     required this.time,
     required this.image,

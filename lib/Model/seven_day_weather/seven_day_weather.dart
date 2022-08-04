@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-class SevenDayWeather extends Equatable {
-  final int max;
-  final int min;
-  final String name;
-  final String day;
-  final String image;
+class SevenDayWeatherModel extends Equatable {
+  int max;
+  int min;
+  String name;
+  String day;
+  String image;
 
-  const SevenDayWeather({
+  SevenDayWeatherModel({
     required this.max,
     required this.min,
     required this.name,

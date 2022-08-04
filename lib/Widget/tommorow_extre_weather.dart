@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pagoda/Api/api_weather.dart';
-import 'package:pagoda/Model/current_weather/current_weather.dart';
+import '../Model/tomorrow_weather/tomorrow_weather.dart';
 
-class ExtraWeather extends StatelessWidget {
-  CurrentWeatherModel currentWeather;
-  ExtraWeather(this.currentWeather, {Key? key}) : super(key: key);
+class TommorowExtraWeather extends StatelessWidget {
+  TomorrowWeatherModel tomorrowTemp;
+  TommorowExtraWeather(this.tomorrowTemp, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,7 @@ class ExtraWeather extends StatelessWidget {
               height: 19.h,
             ),
             Text(
-              currentWeather.wind.toString() + " Km/h",
+              tomorrowTemp.wind.toString() + " Km/h",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 59.sp),
             ),
             SizedBox(
@@ -47,7 +46,7 @@ class ExtraWeather extends StatelessWidget {
               height: 19.h,
             ),
             Text(
-              currentWeather.humidity.toString() + " %",
+              tomorrowTemp.humidity.toString() + " %",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 59.sp),
             ),
             SizedBox(
@@ -70,7 +69,7 @@ class ExtraWeather extends StatelessWidget {
               height: 19.h,
             ),
             Text(
-              currentWeather.chanceRain.toString() + " %",
+              tomorrowTemp.chanceRain.toString() + " %",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 59.sp),
             ),
             SizedBox(

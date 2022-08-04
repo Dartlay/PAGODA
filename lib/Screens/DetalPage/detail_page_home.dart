@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pagoda/Api/api_weather.dart';
+import 'package:pagoda/Model/seven_day_weather/seven_day_weather.dart';
+import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
 import 'package:pagoda/Widget/extra_weather.dart';
+import 'package:pagoda/Widget/tommorow_extre_weather.dart';
 
 class DetailPage extends StatelessWidget {
-  final Weather tomorrowTemp;
-  final List<Weather> sevenDay;
-  DetailPage(this.tomorrowTemp, this.sevenDay);
+  final TomorrowWeatherModel tomorrowTemp;
+  final List<SevenDayWeatherModel> sevenDayWeatherdata;
+  DetailPage(this.tomorrowTemp, this.sevenDayWeatherdata);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +22,10 @@ class DetailPage extends StatelessWidget {
           ),
         ),
         child: Column(
-          children: [TomorrowWeather(tomorrowTemp), SevenDays(sevenDay)],
+          children: [
+            TomorrowWeather(tomorrowTemp),
+            SevenDays(sevenDayWeatherdata)
+          ],
         ),
       ),
     );
@@ -26,7 +33,7 @@ class DetailPage extends StatelessWidget {
 }
 
 class TomorrowWeather extends StatelessWidget {
-  final Weather tomorrowTemp;
+  final TomorrowWeatherModel tomorrowTemp;
   TomorrowWeather(this.tomorrowTemp);
 
   @override
@@ -58,9 +65,9 @@ class TomorrowWeather extends StatelessWidget {
                       color: Colors.white,
                     ),
                     Text(
-                      " 7 days",
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      " 7 Days",
+                      style: TextStyle(
+                          fontSize: 110.r, fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -85,7 +92,10 @@ class TomorrowWeather extends StatelessWidget {
                   children: [
                     Text(
                       "Tomorrow",
-                      style: TextStyle(fontSize: 30, height: 0.1),
+                      style: TextStyle(
+                          fontSize: 135.r,
+                          fontWeight: FontWeight.bold,
+                          height: 0.1),
                     ),
                     Container(
                       height: 105,
@@ -95,13 +105,13 @@ class TomorrowWeather extends StatelessWidget {
                           GlowText(
                             tomorrowTemp.max.toString(),
                             style: TextStyle(
-                                fontSize: 100, fontWeight: FontWeight.bold),
+                                fontSize: 355.sp, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             "/" + tomorrowTemp.min.toString() + "\u00B0",
                             style: TextStyle(
                                 color: Colors.black54.withOpacity(0.3),
-                                fontSize: 40,
+                                fontSize: 145.sp,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -113,8 +123,7 @@ class TomorrowWeather extends StatelessWidget {
                     Text(
                       " " + tomorrowTemp.name,
                       style: TextStyle(
-                        fontSize: 15,
-                      ),
+                          fontSize: 100.r, fontWeight: FontWeight.bold),
                     )
                   ],
                 )
@@ -133,7 +142,7 @@ class TomorrowWeather extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                ExtraWeather(tomorrowTemp)
+                TommorowExtraWeather(tomorrowTemp)
               ],
             ),
           )
@@ -144,33 +153,35 @@ class TomorrowWeather extends StatelessWidget {
 }
 
 class SevenDays extends StatelessWidget {
-  List<Weather> sevenDay;
-  SevenDays(this.sevenDay);
+  List<SevenDayWeatherModel> sevenDayWeatherdata;
+  SevenDays(this.sevenDayWeatherdata);
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Expanded(
         child: ListView.builder(
-            itemCount: sevenDay.length,
+            itemCount: sevenDayWeatherdata.length,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
                   padding: EdgeInsets.only(left: 20, right: 20, bottom: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(sevenDay[index].day, style: TextStyle(fontSize: 20)),
+                      Text(sevenDayWeatherdata[index].day,
+                          style: TextStyle(fontSize: 20)),
                       Container(
                         width: 135,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Image(
-                              image: AssetImage(sevenDay[index].image),
+                              image:
+                                  AssetImage(sevenDayWeatherdata[index].image),
                               width: 40,
                             ),
                             SizedBox(width: 15),
                             Text(
-                              sevenDay[index].name,
+                              sevenDayWeatherdata[index].name,
                               style: TextStyle(fontSize: 20),
                             )
                           ],
@@ -179,14 +190,18 @@ class SevenDays extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "+" + sevenDay[index].max.toString() + "\u00B0",
+                            "+" +
+                                sevenDayWeatherdata[index].max.toString() +
+                                "\u00B0",
                             style: TextStyle(fontSize: 20),
                           ),
                           SizedBox(
                             width: 5,
                           ),
                           Text(
-                            "+" + sevenDay[index].min.toString() + "\u00B0",
+                            "+" +
+                                sevenDayWeatherdata[index].min.toString() +
+                                "\u00B0",
                             style: TextStyle(fontSize: 20, color: Colors.grey),
                           ),
                         ],

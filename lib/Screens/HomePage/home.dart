@@ -1,24 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pagoda/Model/current_weather/current_weather.dart';
 import 'package:pagoda/Model/seven_day_weather/seven_day_weather.dart';
-
+import 'package:pagoda/Model/today_weather/today_weather.dart';
 import 'package:pagoda/Model/today_weather/today_weather_data.dart';
 import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
 import 'package:pagoda/Screens/DetalPage/detail_page_home.dart';
 import 'package:pagoda/Utilits/city_model.dart';
 import 'package:pagoda/Widget/extra_weather.dart';
 import 'package:pagoda/Widget/weather_tablet_widget.dart';
+import 'package:pagoda/bloc/weather_bloc.dart';
 
-Weather? currentTemp;
-Weather tomorrowTemp = Weather();
-List<Weather>? todayWeather;
-List<Weather>? sevenDay;
+CurrentWeatherModel? currentWeather;
+TomorrowWeatherModel? tomorrowTemp;
+List<TodayWeatherModel>? todayWeatherData;
+List<SevenDayWeatherModel>? sevenDayWeatherdata;
 String lat = "53.9006";
 String lon = "27.5590";
-String city = "Minisk";
+String city = "Minsk";
 
 class Home extends StatefulWidget {
   @override
@@ -26,26 +28,55 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late final _bloc;
   Function()? get updateData => null;
-
-  getData() async {
-    fetchData(lat, lon, city).then((value) {
-      currentTemp = value[0];
-      todayWeather = value[1];
-      tomorrowTemp = value[2];
-      sevenDay = value[3];
-      setState(() {});
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    getData();
+    _bloc = BlocProvider.of<WeatherBloc>(context);
+    _bloc.add(WeatherInitializeEvent());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<WeatherBloc, WeatherState>(
+      bloc: _bloc,
+      builder: (context, state) {
+        return Scaffold(
+          body: Container(
+            width: 1440.w,
+            height: 2560.h,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/minimal.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Builder(
+              builder: (BuildContext context) {
+                if (state is WeatherLoadedState) {
+                  return _buildLoadedState(state);
+                }
+                return const Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Color.fromARGB(255, 147, 212, 235),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget _buildLoadedState(WeatherLoadedState state) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -58,28 +89,31 @@ class _HomeState extends State<Home> {
           ),
         ),
         // ignore: unnecessary_null_comparison
-        child: currentTemp == null
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: Color.fromARGB(255, 147, 212, 235),
-                ),
-              )
-            : Column(children: [Currentweather(getData), TodayWeather()]),
+        child:
+            // currentWeather == null
+            //     ?
+            // Center(
+            //     child: CircularProgressIndicator(
+            //       color: Color.fromARGB(255, 147, 212, 235),
+            //     ),
+            //   )
+            // :
+
+            //TODO put todayData in to TodayWeather
+            Column(children: [Currentweather(), TodayWeather()]),
       ),
     );
   }
 }
 
 class Currentweather extends StatefulWidget {
-  final Function() updateData;
-  Currentweather(this.updateData);
   @override
   _CurrentWeatherState createState() => _CurrentWeatherState();
 }
 
 class _CurrentWeatherState extends State<Currentweather> {
   bool searchBar = false;
-  bool updating = true;
+  bool updating = false;
   var focusNode = FocusNode();
 
   @override
@@ -146,7 +180,8 @@ class _CurrentWeatherState extends State<Currentweather> {
                           updating = true;
 
                           setState(() {});
-                          widget.updateData();
+                          Function()? updateData;
+                          // widget.updateData ?? (null);
                           searchBar = false;
                           updating = false;
                           setState(() {});
@@ -204,7 +239,7 @@ class _CurrentWeatherState extends State<Currentweather> {
               child: Stack(
                 children: [
                   Image(
-                    image: AssetImage(currentTemp!.image),
+                    image: AssetImage(currentWeather!.image),
                     fit: BoxFit.contain,
                   ),
                   Padding(
@@ -213,7 +248,7 @@ class _CurrentWeatherState extends State<Currentweather> {
                         child: Column(
                       children: [
                         GlowText(
-                          currentTemp!.current.toString(),
+                          currentWeather!.current.toString(),
                           style: TextStyle(
                               height: 0.1.h,
                               fontSize: 355.sp,
@@ -221,12 +256,12 @@ class _CurrentWeatherState extends State<Currentweather> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8).r,
-                          child: Text(currentTemp!.name,
+                          child: Text(currentWeather!.name,
                               style: TextStyle(
                                 fontSize: 110.sp,
                               )),
                         ),
-                        Text(currentTemp!.day,
+                        Text(currentWeather!.day,
                             style: TextStyle(
                               fontSize: 100.sp,
                             ))
@@ -241,7 +276,7 @@ class _CurrentWeatherState extends State<Currentweather> {
             //   height:
             // }
 
-            ExtraWeather(currentTemp!),
+            ExtraWeather(currentWeather!),
           ])),
     );
   }
@@ -270,7 +305,7 @@ class TodayWeather extends StatelessWidget {
                   onTap: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (BuildContext context) {
-                      return DetailPage(tomorrowTemp, sevenDay!);
+                      return DetailPage(tomorrowTemp!, sevenDayWeatherdata!);
                     }));
                   },
                   child: Row(
@@ -278,9 +313,10 @@ class TodayWeather extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 25).r,
                         child: Text(
-                          "7 days ",
+                          "7 Days ",
                           style: TextStyle(
                               fontSize: 92.sp,
+                              fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 255, 255, 255)),
                         ),
                       ),
@@ -308,19 +344,19 @@ class TodayWeather extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 90, top: 20).r,
-                        child: WeatherWidget(todayWeather![0]),
+                        child: WeatherWidget(todayWeatherData![0]),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20).r,
-                        child: WeatherWidget(todayWeather![1]),
+                        child: WeatherWidget(todayWeatherData![1]),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20).r,
-                        child: WeatherWidget(todayWeather![2]),
+                        child: WeatherWidget(todayWeatherData![2]),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 90, top: 20).r,
-                        child: WeatherWidget(todayWeather![3]),
+                        child: WeatherWidget(todayWeatherData![3]),
                       )
                     ]),
               ),

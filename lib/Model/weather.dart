@@ -5,10 +5,10 @@ import 'package:pagoda/Model/today_weather/today_weather_data.dart';
 import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather_data.dart';
 
 class Weather extends Equatable {
-  final CurrentWeatherData currentWeatherData;
-  final SevenDayWeatherData sevenDayWeatherData;
-  final TodayWeatherData todayWeatherData;
-  final Tomorrow_WeatherData tomorrowWeatherData;
+  CurrentWeatherData currentWeatherData;
+  SevenDayWeatherData sevenDayWeatherData;
+  TodayWeatherData todayWeatherData;
+  TomorrowWeatherData tomorrowWeatherData;
   Weather(
       {required this.currentWeatherData,
       required this.sevenDayWeatherData,
@@ -20,5 +20,6 @@ class Weather extends Equatable {
         currentWeatherData,
         sevenDayWeatherData,
         todayWeatherData,
+        tomorrowWeatherData,
       ];
 }

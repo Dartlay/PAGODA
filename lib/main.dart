@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pagoda/Screens/HomePage/home.dart';
 import 'package:flutter/services.dart';
+import 'package:pagoda/bloc/weather_bloc.dart';
 
 void main() {
   // add these lines
@@ -12,9 +14,13 @@ void main() {
   ]);
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
-      overlays: [SystemUiOverlay.top]);
+      overlays: [SystemUiOverlay.bottom]);
 
-  runApp(Pogodka());
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (_) => WeatherBloc(),
+    )
+  ], child: Pogodka()));
 }
 
 class Pogodka extends StatefulWidget {

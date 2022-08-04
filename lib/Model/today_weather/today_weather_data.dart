@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:pagoda/Model/today_weather/today_weather.dart';
 
 class TodayWeatherData extends Equatable {
-  final List<TodayWeather> todayWeatherData;
+  List<TodayWeatherModel> todayWeatherData;
 
   TodayWeatherData({required this.todayWeatherData});
   @override
