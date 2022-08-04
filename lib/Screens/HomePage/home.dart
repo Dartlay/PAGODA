@@ -2,7 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pagoda/Api/api_weather.dart';
+import 'package:pagoda/Model/current_weather/current_weather.dart';
+import 'package:pagoda/Model/seven_day_weather/seven_day_weather.dart';
+
+import 'package:pagoda/Model/today_weather/today_weather_data.dart';
+import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
 import 'package:pagoda/Screens/DetalPage/detail_page_home.dart';
 import 'package:pagoda/Utilits/city_model.dart';
 import 'package:pagoda/Widget/extra_weather.dart';
