@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 class CityModel {
-  final String name;
-  final String lat;
-  final String lon;
+  String name;
+  String lat;
+  String lon;
   CityModel({required this.name, required this.lat, required this.lon});
 }
 

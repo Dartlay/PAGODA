@@ -4,7 +4,14 @@ abstract class WeatherEvent {}
 
 class WeatherInitializeEvent extends WeatherEvent {}
 
-class WeatherSearchEvent extends WeatherEvent {
-  final String cityName;
-  WeatherSearchEvent({required this.cityName});
+class WeatherloadedEvent extends WeatherEvent {}
+
+class WeatherChangedEvent extends WeatherEvent {
+  WeatherChangedEvent({
+    required this.searchBar,
+    required this.city,
+  });
+
+  final String city;
+  final bool searchBar;
 }

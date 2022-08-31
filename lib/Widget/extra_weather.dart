@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pagoda/Api/api_weather.dart';
 import 'package:pagoda/Model/current_weather/current_weather.dart';
+import 'package:pagoda/bloc/weather_bloc.dart';
 
 class ExtraWeather extends StatelessWidget {
-  CurrentWeatherModel currentWeather;
-  ExtraWeather(this.currentWeather, {Key? key}) : super(key: key);
-
+  ExtraWeather(this.state);
+  final WeatherLoadedState state;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -24,7 +24,9 @@ class ExtraWeather extends StatelessWidget {
               height: 19.h,
             ),
             Text(
-              currentWeather.wind.toString() + " Km/h",
+              state.weather.currentWeatherData.currentWeatherData.wind
+                      .toString() +
+                  " Km/h",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 59.sp),
             ),
             SizedBox(
@@ -47,7 +49,9 @@ class ExtraWeather extends StatelessWidget {
               height: 19.h,
             ),
             Text(
-              currentWeather.humidity.toString() + " %",
+              state.weather.currentWeatherData.currentWeatherData.humidity
+                      .toString() +
+                  " %",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 59.sp),
             ),
             SizedBox(
@@ -70,7 +74,9 @@ class ExtraWeather extends StatelessWidget {
               height: 19.h,
             ),
             Text(
-              currentWeather.chanceRain.toString() + " %",
+              state.weather.currentWeatherData.currentWeatherData.chanceRain
+                      .toString() +
+                  " %",
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 59.sp),
             ),
             SizedBox(
