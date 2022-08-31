@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pagoda/Api/api_weather.dart';
@@ -6,13 +7,49 @@ import 'package:pagoda/Model/seven_day_weather/seven_day_weather.dart';
 import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
 import 'package:pagoda/Widget/extra_weather.dart';
 import 'package:pagoda/Widget/tommorow_extre_weather.dart';
+import 'package:pagoda/bloc/weather_bloc.dart';
 
-class DetailPage extends StatelessWidget {
-  final TomorrowWeatherModel tomorrowTemp;
-  final List<SevenDayWeatherModel> sevenDayWeatherdata;
-  DetailPage(this.tomorrowTemp, this.sevenDayWeatherdata);
+class DetailPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  late final WeatherBloc _bloc;
+
+  @override
+  void didChangeDependencies() {
+    _bloc = context.read<WeatherBloc>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: BlocBuilder<WeatherBloc, WeatherState>(
+          builder: (context, state) {
+            if (state is WeatherLoadingState) {
+              return Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: AssetImage('assets/minimal2.png'),
+                )),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Color.fromARGB(255, 244, 248, 249),
+                )),
+              );
+            }
+            if (state is WeatherLoadedState) {
+              return _buildLoadedState(state, _bloc);
+            } else {
+              return Container();
+            }
+          },
+        ),
+      );
+
+  @override
+  Widget _buildLoadedState(WeatherLoadedState state, WeatherBloc bloc) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -23,8 +60,12 @@ class DetailPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            TomorrowWeather(tomorrowTemp),
-            SevenDays(sevenDayWeatherdata)
+            TomorrowWeather(
+              state: state,
+            ),
+            SevenDays(
+              state: state,
+            )
           ],
         ),
       ),
@@ -33,8 +74,8 @@ class DetailPage extends StatelessWidget {
 }
 
 class TomorrowWeather extends StatelessWidget {
-  final TomorrowWeatherModel tomorrowTemp;
-  TomorrowWeather(this.tomorrowTemp);
+  TomorrowWeather({required this.state});
+  final WeatherLoadedState state;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +125,8 @@ class TomorrowWeather extends StatelessWidget {
                   height: MediaQuery.of(context).size.width / 2.3,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage(tomorrowTemp.image))),
+                          image: AssetImage(state.weather.tomorrowWeatherData
+                              .tomorrowWeatherData.image))),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,12 +145,18 @@ class TomorrowWeather extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           GlowText(
-                            tomorrowTemp.max.toString(),
+                            state.weather.tomorrowWeatherData
+                                .tomorrowWeatherData.max
+                                .toString(),
                             style: TextStyle(
                                 fontSize: 355.sp, fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "/" + tomorrowTemp.min.toString() + "\u00B0",
+                            "/" +
+                                state.weather.tomorrowWeatherData
+                                    .tomorrowWeatherData.min
+                                    .toString() +
+                                "\u00B0",
                             style: TextStyle(
                                 color: Colors.black54.withOpacity(0.3),
                                 fontSize: 145.sp,
@@ -121,7 +169,9 @@ class TomorrowWeather extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      " " + tomorrowTemp.name,
+                      " " +
+                          state.weather.tomorrowWeatherData.tomorrowWeatherData
+                              .name,
                       style: TextStyle(
                           fontSize: 100.r, fontWeight: FontWeight.bold),
                     )
@@ -142,7 +192,7 @@ class TomorrowWeather extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                TommorowExtraWeather(tomorrowTemp)
+                TommorowExtraWeather(state)
               ],
             ),
           )
@@ -153,36 +203,43 @@ class TomorrowWeather extends StatelessWidget {
 }
 
 class SevenDays extends StatelessWidget {
-  List<SevenDayWeatherModel> sevenDayWeatherdata;
-  SevenDays(this.sevenDayWeatherdata);
+  SevenDays({required this.state});
+  final WeatherLoadedState state;
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Expanded(
         child: ListView.builder(
-            itemCount: sevenDayWeatherdata.length,
+            itemCount:
+                state.weather.sevenDayWeatherData.sevenDayWeatherdata.length,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 25),
+                  padding: EdgeInsets.only(left: 70, right: 70, bottom: 150).r,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(sevenDayWeatherdata[index].day,
-                          style: TextStyle(fontSize: 20)),
+                      Text(
+                          state.weather.sevenDayWeatherData
+                              .sevenDayWeatherdata[index].day,
+                          style: TextStyle(fontSize: 84.sp)),
                       Container(
                         width: 135,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Image(
-                              image:
-                                  AssetImage(sevenDayWeatherdata[index].image),
-                              width: 40,
+                              image: AssetImage(state
+                                  .weather
+                                  .sevenDayWeatherData
+                                  .sevenDayWeatherdata[index]
+                                  .image),
+                              width: 160.w,
                             ),
-                            SizedBox(width: 15),
+                            SizedBox(width: 30.w),
                             Text(
-                              sevenDayWeatherdata[index].name,
-                              style: TextStyle(fontSize: 20),
+                              state.weather.sevenDayWeatherData
+                                  .sevenDayWeatherdata[index].name,
+                              style: TextStyle(fontSize: 84.sp),
                             )
                           ],
                         ),
@@ -191,18 +248,23 @@ class SevenDays extends StatelessWidget {
                         children: [
                           Text(
                             "+" +
-                                sevenDayWeatherdata[index].max.toString() +
+                                state.weather.sevenDayWeatherData
+                                    .sevenDayWeatherdata[index].max
+                                    .toString() +
                                 "\u00B0",
-                            style: TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 80.sp),
                           ),
                           SizedBox(
                             width: 5,
                           ),
                           Text(
                             "+" +
-                                sevenDayWeatherdata[index].min.toString() +
+                                state.weather.sevenDayWeatherData
+                                    .sevenDayWeatherdata[index].min
+                                    .toString() +
                                 "\u00B0",
-                            style: TextStyle(fontSize: 20, color: Colors.grey),
+                            style:
+                                TextStyle(fontSize: 70.sp, color: Colors.grey),
                           ),
                         ],
                       )

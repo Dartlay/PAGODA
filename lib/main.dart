@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pagoda/Api/api_response.dart';
 import 'package:pagoda/Screens/HomePage/home.dart';
 import 'package:flutter/services.dart';
 import 'package:pagoda/bloc/weather_bloc.dart';
+import 'package:pagoda/repository/weather_repository.dart';
 
 void main() {
   // add these lines
@@ -18,7 +20,11 @@ void main() {
 
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
-      create: (_) => WeatherBloc(),
+      create: (_) => WeatherBloc(
+        repository: WetherRepository(
+          service: DataService.getInstance(),
+        ),
+      ),
     )
   ], child: Pogodka()));
 }

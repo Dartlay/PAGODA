@@ -8,7 +8,6 @@ import 'package:pagoda/Model/today_weather/today_weather_data.dart';
 import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
 import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather_data.dart';
 import 'package:pagoda/Model/weather.dart';
-import 'package:pagoda/Screens/HomePage/home.dart';
 import '../Utilits/find_icon.dart';
 
 class WeatherModel extends Weather {
@@ -24,8 +23,15 @@ class WeatherModel extends Weather {
           todayWeatherData: todayWeatherData,
         );
 
+  static String _formatLocation(String value) {
+    final pos = value.indexOf('/');
+    final res = value.replaceRange(0, pos + 1, '');
+    return res;
+  }
+
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
     DateTime date = DateTime.now();
+    var city = _formatLocation(json["timezone"].toString());
     var current = json["current"];
     var daily = json["daily"][0];
     CurrentWeatherModel currentTemp = CurrentWeatherModel(

@@ -1,68 +1,68 @@
-import 'package:bloc/bloc.dart';
-import 'package:pagoda/Api/api_response.dart';
-import 'package:pagoda/Model/current_weather/current_weather.dart';
-import 'package:pagoda/Model/current_weather/current_weather_data.dart';
-import 'package:pagoda/Model/seven_day_weather/seven_day_weather.dart';
-import 'package:pagoda/Model/seven_day_weather/seven_day_weather_data.dart';
-import 'package:pagoda/Model/today_weather/today_weather.dart';
-import 'package:pagoda/Model/today_weather/today_weather_data.dart';
-import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
-import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather_data.dart';
+import 'dart:async';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pagoda/Model/weather_model.dart';
-import 'package:pagoda/Screens/HomePage/home.dart';
+
+import '../Utilits/city_model.dart';
+import '../repository/weather_repository.dart';
+
+// import 'package:bloc/bloc.dart';
+// import 'package:pagoda/Api/api_response.dart';
+// import 'package:pagoda/Model/current_weather/current_weather.dart';
+// import 'package:pagoda/Model/current_weather/current_weather_data.dart';
+// import 'package:pagoda/Model/seven_day_weather/seven_day_weather_data.dart';
+// import 'package:pagoda/Model/today_weather/today_weather_data.dart';
+// import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
+// import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather_data.dart';
+// import 'package:pagoda/Model/weather_model.dart';
+// import 'package:pagoda/Screens/HomePage/home.dart';
+// import 'package:pagoda/Utilits/city_model.dart';
+// import 'package:pagoda/repository/weather.dart';
 
 part 'weather_event.dart';
 part 'weather_state.dart';
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
-  WeatherBloc() : super(WeatherInitialState()) {
-    final service = DataService();
-    var _currentWeatherData = CurrentWeatherData(
-        currentWeatherData: CurrentWeatherModel(
-      current: 0,
-      name: "",
-      day: "",
-      wind: 0,
-      humidity: 0,
-      chanceRain: 0,
-      location: "",
-      image: "",
-    ));
-    var _sevenDayWeatherData = SevenDayWeatherData(sevenDayWeatherdata: []);
-    var _todayWeatherData = TodayWeatherData(todayWeatherData: []);
-    var _tomorrowWeatherData = TomorrowWeatherData(
-        tomorrowWeatherData: TomorrowWeatherModel(
-            max: 0.0,
-            min: 0.0,
-            image: "",
-            name: "",
-            humidity: 0,
-            chanceRain: 0,
-            wind: 0));
-    var _weatherModel = WeatherModel(
-        currentWeatherData: _currentWeatherData,
-        sevenDayWeatherData: _sevenDayWeatherData,
-        todayWeatherData: _todayWeatherData,
-        tomorrowWeatherData: _tomorrowWeatherData);
-    on<WeatherInitializeEvent>((event, emit) async {
-      // Function()? get;
+  WeatherBloc({required this.repository}) : super(WeatherInitialState()) {
+    on<WeatherInitializeEvent>(_onInit);
+    on<WeatherChangedEvent>(_onChange);
+  }
+  final WetherRepository repository;
 
-      await service.fetchData(lat, lon, city).then((value) {
-        currentWeather = value.currentWeatherData.currentWeatherData;
-        todayWeatherData = value.todayWeatherData.todayWeatherData;
-        tomorrowTemp = value.tomorrowWeatherData.tomorrowWeatherData;
-        sevenDayWeatherdata = value.sevenDayWeatherData.sevenDayWeatherdata;
-      });
+  bool searchBar = false;
+  final bool updating = true;
+  final bool error = false;
+
+  FutureOr<void> _onInit(
+      WeatherInitializeEvent event, Emitter<WeatherState> emit) async {
+    emit(WeatherLoadingState());
+    try {
+      const cityInitValue = 'Minsk';
+      final weather = await repository.fetchData(cityInitValue);
+      final city = weather?.currentWeatherData.currentWeatherData.location;
 
       emit(WeatherLoadedState(
-          weather: WeatherModel(
-              currentWeatherData: _currentWeatherData,
-              sevenDayWeatherData: _sevenDayWeatherData,
-              todayWeatherData: _todayWeatherData,
-              tomorrowWeatherData: _tomorrowWeatherData),
-          error: false));
-    });
+        city: city!,
+        weather: weather!,
+        error: this.error,
+        searchBar: this.searchBar,
+      ));
+    } catch (e) {
+      emit(WeatherErrorState());
+    }
   }
 
-  // fetchData(String lat, String lon, String city) {}
+  FutureOr<void> _onChange(
+      WeatherChangedEvent event, Emitter<WeatherState> emit) async {
+    emit(WeatherLoadingState());
+    try {
+      final weather = await repository.service.fetchData(event.city);
+      searchBar = true;
+      emit(WeatherLoadedState(
+          city: event.city,
+          weather: weather!,
+          error: error,
+          searchBar: !event.searchBar));
+    } catch (_) {}
+  }
 }
