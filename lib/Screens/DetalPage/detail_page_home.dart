@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pagoda/Api/api_weather.dart';
-import 'package:pagoda/Model/seven_day_weather/seven_day_weather.dart';
-import 'package:pagoda/Model/tomorrow_weather/tomorrow_weather.dart';
-import 'package:pagoda/Widget/extra_weather.dart';
+
 import 'package:pagoda/Widget/tommorow_extre_weather.dart';
 import 'package:pagoda/bloc/weather_bloc.dart';
 
@@ -63,6 +60,9 @@ class _DetailPageState extends State<DetailPage> {
             TomorrowWeather(
               state: state,
             ),
+            SizedBox(
+              height: 50.h,
+            ),
             SevenDays(
               state: state,
             )
@@ -87,7 +87,8 @@ class TomorrowWeather extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 50, right: 30, left: 30, bottom: 20),
+            padding:
+                EdgeInsets.only(top: 50, right: 60, left: 60, bottom: 60).r,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

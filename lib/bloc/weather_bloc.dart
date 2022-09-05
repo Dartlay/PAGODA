@@ -55,8 +55,9 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   FutureOr<void> _onChange(
       WeatherChangedEvent event, Emitter<WeatherState> emit) async {
     emit(WeatherLoadingState());
+    var reqCity = event.city.replaceAll(' ', '');
     try {
-      final weather = await repository.service.fetchData(event.city);
+      final weather = await repository.service.fetchData(reqCity);
       searchBar = true;
       emit(WeatherLoadedState(
           city: event.city,

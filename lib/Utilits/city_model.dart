@@ -23,7 +23,7 @@ Future<CityModel?> fetchCity(String cityName) async {
     if (cityJSON[i]["name"].toString().toLowerCase() ==
         cityName.toLowerCase()) {
       return CityModel(
-          name: cityJSON[i]["name"].toString(),
+          name: cityJSON[i]["name"].toString().replaceAll(' ', ''),
           lat: cityJSON[i]["latitude"].toString(),
           lon: cityJSON[i]["longitude"].toString());
     }

@@ -32,15 +32,32 @@ class _HomeState extends State<Home> {
           builder: (context, state) {
             if (state is WeatherLoadingState) {
               return Container(
-                decoration: BoxDecoration(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                  image: AssetImage('assets/minimal.png'),
-                )),
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Color.fromARGB(255, 244, 248, 249),
-                )),
-              );
+                      image: AssetImage('assets/minimal.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 1100).r,
+                    child: Column(children: [
+                      Text("Please wait for it",
+                          style: TextStyle(
+                              height: 0.1.h,
+                              fontSize: 100.sp,
+                              fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 120).r,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Color.fromARGB(255, 244, 248, 249),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ));
             }
             if (state is WeatherLoadedState) {
               return _buildLoadedState(state, _bloc);
@@ -115,91 +132,89 @@ class _CurrentweatherState extends State<Currentweather> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 70).r,
-              child: Container(
-                child: searchBar
-                    ? TextField(
-                        style: TextStyle(color: Colors.black),
-                        focusNode: focusNode,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            fillColor: Color.fromARGB(255, 255, 255, 255),
-                            filled: true,
-                            hintText: "Enter a city Name",
-                            hintStyle: TextStyle(color: Colors.black)),
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: (value) async {
-                          CityModel? temp = await fetchCity(value);
-                          if (temp == null) {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    backgroundColor:
-                                        Color.fromARGB(255, 8, 3, 3),
-                                    title: Text("City not found"),
-                                    content: Text("Please check the city name"),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("Ok"))
-                                    ],
-                                  );
-                                });
-                            searchBar = false;
-                            return;
-                          }
+            Container(
+              child: searchBar
+                  ? TextField(
+                      style: TextStyle(color: Colors.black),
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          filled: true,
+                          hintText: "Enter a city Name",
+                          hintStyle: TextStyle(color: Colors.black)),
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (value) async {
+                        CityModel? temp =
+                            await fetchCity(value.replaceAll(' ', ''));
+                        if (temp == null) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: Color.fromARGB(255, 8, 3, 3),
+                                  title: Text("City not found"),
+                                  content: Text("Please check the city name"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("Ok"))
+                                  ],
+                                );
+                              });
+                          searchBar = false;
+                          return;
+                        }
 
-                          setState(() {
-                            searchBar = false;
-                          });
-                          widget.bloc.add(
-                            WeatherChangedEvent(
-                              city: value,
-                              searchBar: searchBar,
-                            ),
-                          );
-                        })
-                    : Padding(
-                        padding: const EdgeInsets.only(left: 0, top: 20).r,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  CupertinoIcons.map_fill,
-                                  color: Colors.white,
-                                  size: 120.sp,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      searchBar = true;
-                                    });
+                        setState(() {
+                          searchBar = false;
+                        });
+                        widget.bloc.add(
+                          WeatherChangedEvent(
+                            city: value.replaceAll(' ', ''),
+                            searchBar: searchBar,
+                          ),
+                        );
+                      })
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 0, top: 20).r,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.map_fill,
+                                color: Colors.white,
+                                size: 120.sp,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    searchBar = true;
+                                  });
 
-                                    focusNode.requestFocus();
-                                  },
-                                  child: Text(
-                                    " " +
-                                        widget.state.weather.currentWeatherData
-                                            .currentWeatherData.location,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: ScreenUtil().setSp(170)),
-                                  ),
+                                  focusNode.requestFocus();
+                                },
+                                child: Text(
+                                  " " +
+                                      widget.state.weather.currentWeatherData
+                                          .currentWeatherData.location,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: ScreenUtil().setSp(170)),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-              ),
+                    ),
             ),
+
             // Padding(
             //   padding: const EdgeInsets.only(top: 20).r,
             //   child: Container(
@@ -215,51 +230,56 @@ class _CurrentweatherState extends State<Currentweather> {
             //   ),
             // ),
             Container(
-              height: 1100.h,
+              height: 1200.h,
               width: 1100.w,
-              child: Stack(
+              child: Column(
                 children: [
                   Image(
                     image: AssetImage(widget.state.weather.currentWeatherData
                         .currentWeatherData.image),
                     fit: BoxFit.contain,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 1000).r,
-                    child: Center(
-                        child: Column(
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 40).r,
+                    child: Column(
                       children: [
-                        GlowText(
-                          widget.state.weather.currentWeatherData
-                              .currentWeatherData.current
-                              .toString(),
-                          style: TextStyle(
-                              height: 0.1.h,
-                              fontSize: 355.sp,
-                              fontWeight: FontWeight.bold),
-                        ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8).r,
+                          padding:
+                              const EdgeInsets.only(left: 300, right: 300).r,
                           child: Text(
-                              widget.state.weather.currentWeatherData
-                                  .currentWeatherData.name,
-                              style: TextStyle(
-                                fontSize: 110.sp,
-                              )),
+                            widget.state.weather.currentWeatherData
+                                .currentWeatherData.current
+                                .toString(),
+                            style: TextStyle(
+                                height: 0.1.h,
+                                fontSize: 355.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
+                        Text(
+                            widget.state.weather.currentWeatherData
+                                .currentWeatherData.name,
+                            style: TextStyle(
+                              fontSize: 110.sp,
+                            )),
                         Text(
                             widget.state.weather.currentWeatherData
                                 .currentWeatherData.day,
                             style: TextStyle(
                               fontSize: 100.sp,
-                            ))
+                            )),
                       ],
-                    )),
-                  ),
+                    ),
+                  )),
                 ],
               ),
             ),
-            ExtraWeather(widget.state),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 60).r,
+              child: ExtraWeather(widget.state),
+            ),
           ],
         ),
       ),
